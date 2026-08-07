@@ -1,26 +1,37 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches:
-      - main
-
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Setup repo
         uses: actions/checkout@v4
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Setup Deno
+        uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
         with:
-          path: .
+          deno-version: v1.x
 
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+      - name: Run linter
+        # allow the job to continue so we can auto-fix in next step
+        continue-on-error: true
+        run: deno lint
+
+      - name: Auto-fix lint and push
+        run: |
+          deno lint --fix
+          # configure git author
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          # if there are staged changes, commit and push using the workflow token
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto-fix deno lint"
+            git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ github.ref_name }}
+          else
+            echo "No lint changes"
+          fi
+
+      - name: Run tests
+        run: deno test -A
