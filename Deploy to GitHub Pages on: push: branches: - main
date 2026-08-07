@@ -1,45 +1,37 @@
-name: Deno
-
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
-
 permissions:
   contents: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Setup Deno
         uses: denoland/setup-deno@61fe2df320078202e33d7d5ad347e7dcfa0e8f31
         with:
           deno-version: v1.x
 
-      - name: Auto-fix linter and push (if changes)
-        run: |
-          deno lint --fix || true
-          deno fmt
-          if [ -n "$(git status --porcelain)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -A
-            git commit -m "ci: auto-fix lint issues" || echo "no changes to commit"
-            git push || echo "push failed (branch protection may prevent pushes)"
-          else
-            echo "No lint fixes to commit"
-          fi
-
-      - name: Run linter (verify)
+      - name: Run linter
+        # allow the job to continue so we can auto-fix in next step
+        continue-on-error: true
         run: deno lint
+
+      - name: Auto-fix lint and push
+        run: |
+          deno lint --fix
+          # configure git author
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          # if there are staged changes, commit and push using the workflow token
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto-fix deno lint"
+            git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" HEAD:${{ github.ref_name }}
+          else
+            echo "No lint changes"
+          fi
 
       - name: Run tests
         run: deno test -A
