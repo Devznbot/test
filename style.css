@@ -1,0 +1,56 @@
+/* Hacker intro style */
+:root{
+  --bg:#000;
+  --matrix:#00ff6a;
+  --panel:#02110a;
+  --muted:#66ff98;
+  --glass: rgba(0,0,0,0.45);
+  --mono: 'Courier New', monospace;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);font-family:var(--mono);color:var(--matrix)}
+canvas#matrix{position:fixed;inset:0;z-index:0}
+.terminal{
+  position:relative;
+  z-index:2;
+  max-width:980px;
+  margin:6vh auto;
+  padding:1.25rem;
+  background:linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.25));
+  border:1px solid rgba(0,255,106,0.06);
+  box-shadow:0 10px 40px rgba(0,0,0,0.6);
+  color:var(--matrix);
+  border-radius:8px;
+  backdrop-filter: blur(6px);
+  min-height:360px;
+  overflow:hidden;
+}
+.terminal .header{
+  color:var(--muted);
+  font-weight:600;
+  margin-bottom:0.5rem;
+  font-size:0.95rem;
+}
+.lines{
+  font-size:1rem;
+  line-height:1.45;
+  white-space:pre-wrap;
+  margin:0;
+  min-height:220px;
+}
+.actions{margin-top:12px;display:flex;gap:.6rem;align-items:center}
+.btn{
+  display:inline-block;padding:.5rem .9rem;border-radius:6px;background:transparent;border:1px solid rgba(0,255,106,0.14);color:var(--matrix);text-decoration:none;font-weight:600;
+  transition:all .18s ease;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,255,106,0.04)}
+.footer-meta{
+  margin-top:10px;color:rgba(0,255,106,0.28);font-size:0.82rem
+}
+
+/* small responsive */
+@media (max-width:640px){
+  .terminal{margin:4vh 12px;padding:1rem}
+  .lines{font-size:.92rem}
+}
