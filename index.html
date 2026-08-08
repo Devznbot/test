@@ -12,6 +12,32 @@
   <div class="terminal" id="terminal" aria-live="polite">
     <div class="header">devznbot@matrix:~$</div>
     <pre class="lines" id="lines"></pre>
+    
+    <!-- Phone Number Form -->
+    <div class="form-section" id="formSection" style="display:none;">
+      <div class="form-divider"></div>
+      <h3 class="form-title">📞 Connect with me</h3>
+      <p class="form-subtitle">Share your number to stay updated</p>
+      
+      <form id="phoneForm" class="phone-form">
+        <div class="form-group">
+          <input 
+            type="tel" 
+            id="phoneInput" 
+            name="phone" 
+            placeholder="Enter your phone number (e.g., +1 234 567 8900)"
+            pattern="[0-9+\s\-\(\)]+"
+            required
+            autocomplete="tel"
+          />
+          <button type="submit" class="form-btn">Submit</button>
+        </div>
+        <p class="form-consent">By submitting, you agree to receive updates. We respect your privacy.</p>
+      </form>
+      
+      <div id="formMessage" style="display:none;"></div>
+    </div>
+    
     <div class="actions">
       <a class="btn" href="https://www.instagram.com/ndevendraa/" target="_blank" rel="noopener">Contact on Instagram</a>
     </div>
