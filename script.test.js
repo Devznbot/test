@@ -1,7 +1,5 @@
-- name: Setup repo
-  uses: actions/checkout@v4
+import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 
-- name: Setup Deno
-  uses: denoland/setup-deno@v2
-  with:
-    deno-version: v1.x
+Deno.test("example test", () => {
+  assertEquals(1 + 1, 2);
+});
