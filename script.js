@@ -86,14 +86,13 @@
     btn.textContent = 'Submitting...';
 
     try {
-      // Send to FormSubmit.co (free service) - replace email with yours
+      // Send to Formspree endpoint
       const formData = new FormData();
       formData.append('phone', phone);
       formData.append('timestamp', new Date().toISOString());
       formData.append('user_agent', navigator.userAgent);
 
-      // IMPORTANT: Replace 'your-email@example.com' with your actual email
-      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      const response = await fetch('https://formspree.io/f/xjybgopz', {
         method: 'POST',
         body: formData,
         headers: {
