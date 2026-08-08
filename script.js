@@ -44,7 +44,13 @@
   ];
   let i=0, char=0;
   function typeLoop(){
-    if(i >= lines.length) return;
+    if(i >= lines.length){
+      // Show form after typing is complete
+      setTimeout(() => {
+        document.getElementById('formSection').style.display = 'block';
+      }, 800);
+      return;
+    }
     const line = lines[i];
     if(char <= line.length){
       linesEl.textContent = lines.slice(0,i).join('\n') + (i ? '\n' : '') + line.slice(0,char) + (char % 2 ? '▌' : '');
@@ -57,6 +63,74 @@
   }
   // start after slight delay so matrix is visible
   setTimeout(typeLoop, 700);
+
+  // Phone Form Handler
+  const phoneForm = document.getElementById('phoneForm');
+  const phoneInput = document.getElementById('phoneInput');
+  const formMessage = document.getElementById('formMessage');
+
+  phoneForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const phone = phoneInput.value.trim();
+    
+    if(!phone){
+      showMessage('Please enter a valid phone number', 'error');
+      return;
+    }
+
+    // Disable button during submission
+    const btn = phoneForm.querySelector('.form-btn');
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Submitting...';
+
+    try {
+      // Send to FormSubmit.co (free service) - replace email with yours
+      const formData = new FormData();
+      formData.append('phone', phone);
+      formData.append('timestamp', new Date().toISOString());
+      formData.append('user_agent', navigator.userAgent);
+
+      // IMPORTANT: Replace 'your-email@example.com' with your actual email
+      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if(response.ok){
+        showMessage('✓ Thank you! We will contact you soon.', 'success');
+        phoneInput.value = '';
+        setTimeout(() => {
+          phoneForm.style.opacity = '0.5';
+          phoneForm.style.pointerEvents = 'none';
+        }, 1500);
+      } else {
+        showMessage('✗ Error submitting. Please try again.', 'error');
+      }
+    } catch(error){
+      console.error('Form submission error:', error);
+      showMessage('✗ Connection error. Please check and retry.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  });
+
+  function showMessage(text, type){
+    formMessage.textContent = text;
+    formMessage.className = type;
+    formMessage.style.display = 'block';
+    
+    if(type === 'success'){
+      setTimeout(() => {
+        formMessage.style.display = 'none';
+      }, 4000);
+    }
+  }
 
   // Simple keyboard interaction (optional)
   window.addEventListener('keydown', (e)=>{
